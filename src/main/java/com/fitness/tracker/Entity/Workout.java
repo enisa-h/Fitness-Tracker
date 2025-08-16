@@ -28,7 +28,9 @@ public class Workout {
 
   private Integer duration;
   private Integer calories;
+
   @Convert(converter = DayOfWeekArrayConverter.class)
+  @Column(name = "days_of_week")
   private DayOfWeek[] daysOfWeek;
   private String notes;
   @CreationTimestamp

@@ -21,7 +21,7 @@ public class WorkoutController {
     private WorkoutService workoutService;
     private ModelMapper modelMapper = new ModelMapper();
 
-    @PostMapping("/create")
+    @PostMapping
     public ResponseEntity<WorkoutResponseDto>  createWorkout(@RequestBody @Valid CreatedWorkoutDto createdWorkoutDto) {
         Workout workout = workoutService.createWorkout(createdWorkoutDto);
         WorkoutResponseDto responseDto = modelMapper.map(workout, WorkoutResponseDto.class);

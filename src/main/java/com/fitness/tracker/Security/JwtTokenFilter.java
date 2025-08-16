@@ -1,6 +1,5 @@
 package com.fitness.tracker.Security;
 
-
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -25,37 +24,30 @@ public class JwtTokenFilter extends OncePerRequestFilter {
     }
 
     @Override
-    protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
+    protected void doFilterInternal(HttpServletRequest request,
+                                    HttpServletResponse response,
+                                    FilterChain filterChain)
             throws ServletException, IOException {
 
-        String header = request.getHeader("Authorization");
-        logger.info("Authorization header: " + header);
+        String path = request.getServletPath();
 
-        if (header != null && header.startsWith("Bearer ")) {
-            String token = header.substring(7);
-            logger.info("Extracted JWT token: " + token);
+        // Skip public endpoints
+        if (path.startsWith("/auth/") || path.startsWith("/api/workout/") ||
+                path.startsWith("/v3/api-docs") || path.startsWith("/swagger-ui")) {
+            filterChain.doFilter(request, response);
+            return;
+        }
 
-            if (tokenProvider.validateToken(token)) {
-                String email = tokenProvider.getEmailFromJwt(token);
-                logger.info("Email from token: " + email);
+        String token = tokenProvider.resolveToken(request);
 
-                UserDetails userDetails = userDetailsService.loadUserByUsername(email);
-
-
-
-                if (userDetails != null) {
-                    UsernamePasswordAuthenticationToken auth =
-                            new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
-                    SecurityContextHolder.getContext().setAuthentication(auth);
-                    logger.info("Authentication set for user: " + email);
-                } else {
-                    logger.warn("UserDetails is null for email: " + email);
-                }
-            } else {
-                logger.warn("JWT token is invalid");
+        if (token != null && tokenProvider.validateToken(token)) {
+            String email = tokenProvider.getEmailFromJwt(token);
+            UserDetails userDetails = userDetailsService.loadUserByUsername(email);
+            if (userDetails != null) {
+                UsernamePasswordAuthenticationToken auth =
+                        new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
+                SecurityContextHolder.getContext().setAuthentication(auth);
             }
-        } else {
-            logger.info("No Bearer token found in header");
         }
 
         filterChain.doFilter(request, response);

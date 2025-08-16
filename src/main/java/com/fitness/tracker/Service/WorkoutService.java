@@ -2,12 +2,15 @@ package com.fitness.tracker.Service;
 
 import com.fitness.tracker.DTO.CreatedWorkoutDto;
 
+import com.fitness.tracker.Entity.User;
 import com.fitness.tracker.Entity.Workout;
 import com.fitness.tracker.Repository.WorkoutRepository;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.Conditions;
 import org.modelmapper.ModelMapper;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -21,7 +24,16 @@ public class WorkoutService {
     private ModelMapper modelMapper = new ModelMapper();
 
     public Workout createWorkout(CreatedWorkoutDto createdWorkoutDto) {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+
+        if (authentication == null || !authentication.isAuthenticated()) {
+            throw new RuntimeException("No authenticated user found");
+        }
+
         Workout workout = modelMapper.map(createdWorkoutDto, Workout.class);
+        User user = userService.findByEmail(authentication.getName())
+                .orElseThrow(() -> new RuntimeException("User not found"));
+        workout.setUser(user); // Assuming userService provides the current user
         return workoutRepository.save(workout);
     }
 
