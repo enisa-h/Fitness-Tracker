@@ -5,6 +5,7 @@ import com.fitness.tracker.Enum.DayOfWeek;
 import com.fitness.tracker.Enum.WorkoutTypeEnum;
 import jakarta.persistence.*;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 
@@ -16,6 +17,14 @@ import static jakarta.persistence.EnumType.STRING;
 @Entity
 @Data
 public class Workout {
+
+  public Workout(Long id) {
+    this.id = id;
+  }
+  public Workout() {
+
+  }
+
   @Id
   @GeneratedValue(strategy = GenerationType.AUTO)
   private Long id;
@@ -37,7 +46,7 @@ public class Workout {
   @Column(name = "created_at", updatable = false)
   private LocalDateTime createdAt;
   @UpdateTimestamp
-    @Column(name = "updated_at")
+  @Column(name = "updated_at")
   private LocalDate updatedAt;
 
   public User getUser() {

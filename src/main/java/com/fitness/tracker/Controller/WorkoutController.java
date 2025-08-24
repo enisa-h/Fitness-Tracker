@@ -1,5 +1,6 @@
 package com.fitness.tracker.Controller;
 
+import com.fitness.tracker.DTO.CreateUserPlanDto;
 import com.fitness.tracker.DTO.CreatedWorkoutDto;
 import com.fitness.tracker.DTO.WorkoutResponseDto;
 import com.fitness.tracker.Entity.Workout;
@@ -10,7 +11,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
 import java.util.List;
 
 @RestController
@@ -47,6 +47,26 @@ public class WorkoutController {
                 .toList();
         return new ResponseEntity<>(responseDtos, HttpStatus.OK);
     }
+
+//    @PostMapping
+//    public ResponseEntity<List<WorkoutResponseDto>> getWorkoutsForUser(@RequestBody Long userId) {
+//        List<Workout> workouts = workoutService.getWorkoutsForUser(userId);
+//        List<WorkoutResponseDto> responseDtos = workouts.stream()
+//                .map(workout -> modelMapper.map(workout, WorkoutResponseDto.class))
+//                .toList();
+//        return new ResponseEntity<>(responseDtos, HttpStatus.OK);
+//    }
+
+    @PostMapping("/my-workout")
+    public void storyMyWorkout(@RequestBody CreateUserPlanDto createUserPlanDto) {
+        workoutService.createWorkoutPlan(createUserPlanDto);
+    }
+
+    @PostMapping("/{workoutId}/complete")
+    public void completeWorkout(@PathVariable Long workoutId) {
+        workoutService.completeWorkout(workoutId);
+    }
+
 }
 
 

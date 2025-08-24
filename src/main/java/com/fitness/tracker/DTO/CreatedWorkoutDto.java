@@ -17,5 +17,4 @@ public class CreatedWorkoutDto {
     private Integer calories;
     private DayOfWeek[] daysOfWeek;
     private String notes;
-
 }
