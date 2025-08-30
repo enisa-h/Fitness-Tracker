@@ -11,6 +11,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
 import java.util.List;
 
 @RestController
@@ -22,24 +23,26 @@ public class WorkoutController {
     private ModelMapper modelMapper = new ModelMapper();
 
     @PostMapping
-    public ResponseEntity<WorkoutResponseDto>  createWorkout(@RequestBody @Valid CreatedWorkoutDto createdWorkoutDto) {
+    public ResponseEntity<WorkoutResponseDto> createWorkout(@RequestBody @Valid CreatedWorkoutDto createdWorkoutDto) {
         Workout workout = workoutService.createWorkout(createdWorkoutDto);
         WorkoutResponseDto responseDto = modelMapper.map(workout, WorkoutResponseDto.class);
         return new ResponseEntity<>(responseDto, HttpStatus.CREATED);
     }
+
     @PatchMapping("/{workoutId}")
     public ResponseEntity<WorkoutResponseDto> updateWorkout(@PathVariable Long workoutId, @RequestBody @Valid CreatedWorkoutDto createdWorkoutDto) {
         Workout workout = workoutService.updateWorkout(workoutId, createdWorkoutDto);
         WorkoutResponseDto responseDto = modelMapper.map(workout, WorkoutResponseDto.class);
         return new ResponseEntity<>(responseDto, HttpStatus.OK);
     }
+
     @DeleteMapping("/{workoutId}")
     public ResponseEntity<Void> deleteWorkout(@PathVariable Long workoutId) {
         workoutService.deleteWorkout(workoutId);
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
 
-    @GetMapping
+    @GetMapping("/my-workout")
     public ResponseEntity<List<WorkoutResponseDto>> getAll() {
         List<Workout> workouts = workoutService.getAll();
         List<WorkoutResponseDto> responseDtos = workouts.stream()
@@ -66,7 +69,4 @@ public class WorkoutController {
     public void completeWorkout(@PathVariable Long workoutId) {
         workoutService.completeWorkout(workoutId);
     }
-
 }
-
-

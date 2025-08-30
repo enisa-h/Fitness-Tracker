@@ -13,4 +13,5 @@ import java.util.List;
 public interface WorkoutRepository extends JpaRepository<Workout, Long> {
     List<Workout> findByUserId(Long userId);
     List<Workout> findByUserIdAndCreatedAtBetween(Long userId, LocalDateTime startDate, LocalDateTime endDate);
+
 }
